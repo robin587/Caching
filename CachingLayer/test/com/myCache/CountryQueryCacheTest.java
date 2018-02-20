@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import com.myCache.daoImpl.CountryDAOImpl;
 import com.myCache.dataObjects.Country;
+
 /**
  * 
  * @author Robin
@@ -22,14 +23,6 @@ import com.myCache.dataObjects.Country;
 public class CountryQueryCacheTest {
 
 	private CountryQueryCache countryQueryCache = null;
-
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
 
 	@Before
 	public void setUp() throws Exception {
@@ -91,23 +84,17 @@ public class CountryQueryCacheTest {
 		countryQueryCache.getCountryImpl().add(country6);
 		countryQueryCache.reload();
 
-		List<Object> objects = (List<Object>) countryQueryCache.
-				queryTableDeepCopy(countryQueryCache.getPrimaryKeyName(), "6");
-		Country c = (Country)objects.get(0);
+		List<Object> objects = (List<Object>) countryQueryCache
+				.queryTableDeepCopy(countryQueryCache.getPrimaryKeyName(), "6");
+		Country c = (Country) objects.get(0);
 		assertEquals("Checking data in Cache", "Brazil", c.getCountryName());
-		c.setCountryName("BRAZIL");		
-		
-		List<Object> objects1 = (List<Object>) countryQueryCache.
-				queryTableDeepCopy(countryQueryCache.getPrimaryKeyName(), "6");
-		Country c1 = (Country)objects1.get(0);
-		
-		
-		assertEquals("Checking data in Cache", "Brazil", c1.getCountryName());
-	}
+		c.setCountryName("BRAZIL");
 
-	@Test
-	public void testInitializeCacheData() {
-		assertTrue(true);
+		List<Object> objects1 = (List<Object>) countryQueryCache
+				.queryTableDeepCopy(countryQueryCache.getPrimaryKeyName(), "6");
+		Country c1 = (Country) objects1.get(0);
+		assertEquals("Checking data in Cache", "Brazil", c1.getCountryName());
+
 	}
 
 	@Test
@@ -116,22 +103,25 @@ public class CountryQueryCacheTest {
 		countryQueryCache.getCountryImpl().add(country7);
 		countryQueryCache.reload();
 
-		List<Object> objects = (List<Object>) countryQueryCache.
-				queryTable(countryQueryCache.getPrimaryKeyName(), "6");
-		Country c = (Country)objects.get(0);
+		List<Object> objects = (List<Object>) countryQueryCache.queryTable(countryQueryCache.getPrimaryKeyName(), "6");
+		Country c = (Country) objects.get(0);
 		assertEquals("Checking data in Cache", "Colombia", c.getCountryName());
-		c.setCountryName("COLOMBIA");		
-		
-		List<Object> objects1 = (List<Object>) countryQueryCache.
-				queryTable(countryQueryCache.getPrimaryKeyName(), "6");
-		Country c1 = (Country)objects1.get(0);
-		
+		c.setCountryName("COLOMBIA");
+
+		List<Object> objects1 = (List<Object>) countryQueryCache.queryTable(countryQueryCache.getPrimaryKeyName(), "6");
+		Country c1 = (Country) objects1.get(0);
+
 		assertNotEquals("Checking data in Cache", "Colombia", c1.getCountryName());
 	}
 
 	@Test
-	public void testLoadObject() {
-		assertTrue(true);
+	public void testDelete(){
+		Country country4 = new Country(4, "BH", "Bahrain");
+		countryQueryCache.getCountryImpl().delete(country4);
+		countryQueryCache.deleteObject(countryQueryCache.getPrimaryKeyName(), "4");
+		List<Object> objects = (List<Object>) countryQueryCache.
+				queryTable(countryQueryCache.getPrimaryKeyName(), "4");
+		assertNull("Checking delete",objects);
+		
 	}
-
 }

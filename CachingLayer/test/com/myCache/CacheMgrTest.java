@@ -11,6 +11,8 @@ import org.junit.Test;
 import org.junit.experimental.categories.Categories.ExcludeCategory;
 
 import com.myCache.dataObjects.Country;
+import com.myCache.dataObjects.Currency;
+import com.myCache.dataObjects.Holiday;
 /**
  * 
  * @author Robin
@@ -18,18 +20,10 @@ import com.myCache.dataObjects.Country;
  */
 public class CacheMgrTest {
 
-	//private CacheMgr cacheMgr;
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
-
+	
 	@Before
 	public void setUp() throws Exception {
-	//	cacheMgr = new CacheMgr();
+        CacheMgr.initializeCache();
 	}
 
 	@After
@@ -37,13 +31,35 @@ public class CacheMgrTest {
 	}
 
 	@Test
-	public void testInitializeCache() {
-	  CacheMgr.initializeCache();
+	public void testLoadDataRead(){
+		Object obj=CacheMgr.loadDataRead("REF_COUNTRY", "0");
+		Country c = (Country)obj;
+		assertEquals("Check data for Country in cache","CAN", c.getCountryCode());
+		
+		Object obj1=CacheMgr.loadDataRead("REF_CURRENCY", "1");
+		Currency cur = (Currency)obj1;
+		assertEquals("Check data for Currency in cache","BHD", cur.getCurrencyCode());
+		
+		Object obj2=CacheMgr.loadDataRead("REF_HOLIDAY", "1");
+		Holiday h = (Holiday)obj2;
+		assertEquals("Check data for Holiday object in cache","LAKE", h.getHolidayName());
 	}
-
+	
+	@Test
+	public void testLoadDataWrite(){
+		Object obj=CacheMgr.loadDataWrite("REF_COUNTRY", "0");
+		Country c = (Country)obj;
+		c.setCountryName("CANADA");
+		
+		Object obj1=CacheMgr.loadDataWrite("REF_COUNTRY", "0");
+		Country c1 = (Country)obj1;
+		assertEquals("Check data for Country in cache","Canada", c1.getCountryName());
+		
+	}
+	
 	@Test(expected=EntityNotFoundException.class)
 	public void testGetObjectFromCache() throws EntityNotFoundException {
-		Object obj=CacheMgr.getObjectFromCache("REF_COUNTRY", "0", true);	
+		Object obj=CacheMgr.getObjectFromCache("REF_COUNTRY", "100", false);	
 	}
 
 	@Test

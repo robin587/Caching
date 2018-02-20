@@ -55,6 +55,9 @@ public class CurrencyQueryCache extends QueryCache {
 		}
 	}
 	
+	/**
+	 * Re populates the cache with the data from dataBase
+	 */
 	public void reload() {
 		List<Object> data = currencyImpl.getAll();
 		write.lock();
@@ -67,6 +70,9 @@ public class CurrencyQueryCache extends QueryCache {
 		write.unlock();
 	}
 	
+	/***
+	 * deep copy of the object is returned instead of reference.
+	 */
 	public List<Object> queryTableDeepCopy(String pKey, String value) {
 		List<Object> objList = null;
 		List<Object> returnList = new ArrayList<Object>();

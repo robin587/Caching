@@ -1,15 +1,14 @@
 package com.myCache;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNull;
 
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.myCache.dataObjects.Currency;
@@ -21,13 +20,7 @@ import com.myCache.dataObjects.Currency;
 public class CurrencyQueryCacheTest {
 
 	private CurrencyQueryCache currencyQueryCache=null;
-	@BeforeClass
-	public static void setUpBeforeClass() throws Exception {
-	}
-
-	@AfterClass
-	public static void tearDownAfterClass() throws Exception {
-	}
+	
 
 	@Before
 	public void setUp() throws Exception {
@@ -80,12 +73,47 @@ public class CurrencyQueryCacheTest {
 
 	@Test
 	public void testQueryTableDeepCopy() {
-		assertTrue(true);
+		Currency currency6 = new Currency(5, "INR", "Indian Rupee");
+		currencyQueryCache.getCurrencyImpl().add(currency6);
+		currencyQueryCache.reload();
+
+		List<Object> objects = (List<Object>) currencyQueryCache
+				.queryTableDeepCopy(currencyQueryCache.getPrimaryKeyName(), "5");
+		Currency c = (Currency) objects.get(0);
+		assertEquals("Checking data in Cache", "Indian Rupee", c.getCurrencyName());
+		c.setCurrencyName("I Rupee");
+
+		List<Object> objects1 = (List<Object>) currencyQueryCache
+				.queryTableDeepCopy(currencyQueryCache.getPrimaryKeyName(), "5");
+		Currency c1 = (Currency) objects1.get(0);
+		assertEquals("Checking data in Cache", "Indian Rupee", c1.getCurrencyName());
 	}
 
 	@Test
 	public void testQueryTable() {
-		assertTrue(true);
+		Currency currency7 = new Currency(7, "DIN", "Dubai");
+		currencyQueryCache.getCurrencyImpl().add(currency7);
+		currencyQueryCache.reload();
+
+		List<Object> objects = (List<Object>) currencyQueryCache.queryTable(currencyQueryCache.getPrimaryKeyName(), "7");
+		Currency c = (Currency) objects.get(0);
+		assertEquals("Checking data in Cache", "Dubai", c.getCurrencyName());
+		c.setCurrencyName("Dubai Dinar");
+
+		List<Object> objects1 = (List<Object>) currencyQueryCache.queryTable(currencyQueryCache.getPrimaryKeyName(), "7");
+		Currency c1 = (Currency) objects1.get(0);
+
+		assertNotEquals("Checking data in Cache", "Colombia", c1.getCurrencyName());
 	}
 
+	@Test
+	public void testDelete(){
+		Currency currency7 = new Currency(7, "DIN", "Dubai");
+		currencyQueryCache.getCurrencyImpl().delete(currency7);
+		currencyQueryCache.deleteObject(currencyQueryCache.getPrimaryKeyName(), "7");
+		List<Object> objects = (List<Object>) currencyQueryCache.
+				queryTable(currencyQueryCache.getPrimaryKeyName(), "7");
+		assertNull("Checking delete",objects);
+		
+	}
 }

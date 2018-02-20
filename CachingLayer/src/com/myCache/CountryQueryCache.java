@@ -56,18 +56,24 @@ public class CountryQueryCache extends QueryCache {
 		}
 	}
 	
+	/**
+	 * Re populates the cache with the data from dataBase
+	 */
 	public void reload() {
 		List<Object> data = countryImpl.getAll();
 		write.lock();
-		Iterator<ConcurrentHashMap<String, List<Object>>> iter = cachedData.values().iterator();
-		while (iter.hasNext()) {
-			ConcurrentHashMap<String, List<Object>> map = (ConcurrentHashMap<String, List<Object>>) iter.next();
+		cachedData.values().forEach(object ->
+		{
+			ConcurrentHashMap<String, List<Object>> map = (ConcurrentHashMap<String, List<Object>>) object;
 			map.clear();
-		}
+		});
 		populateCachedData((List<Object>)data);
 		write.unlock();
 	}
 	
+	/***
+	 * deep copy of the object is returned instead of reference.
+	 */
 	public List<Object> queryTableDeepCopy(String pKey, String value) {
 		List<Object> objList = null;
 		List<Object> returnList = new ArrayList<Object>();
@@ -92,6 +98,9 @@ public class CountryQueryCache extends QueryCache {
 		return returnList;
 	}
 	
+	/**
+	 * 
+	 */
 	@Override
 	public String getDBTableName() {
 		return TABLE_NAME;
