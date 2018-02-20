@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Packaging Generator" default="_packaging_generation_">
+<target name="_packaging_generation_" depends="N65540"/>
+	
+<target name="N65540" description="myCache-1.0.jar">
+<mkdir dir="build"/>
+<jar destfile="build/myCache-1.0.jar" manifest="src/META-INF/MANIFEST.MF">
+<zipfileset dir="bin" includes="**/**/*.class"/>
+</jar>
+</target>
+</project>
